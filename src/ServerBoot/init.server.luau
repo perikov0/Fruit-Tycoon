@@ -22,13 +22,24 @@ Iterate("ServerInit")
 local function PlayerInit(player: Player)
 	Iterate("PlayerInit", player)
 
-	if player.Character then
+	local function CharacterInit(character)
 		Iterate("CharacterInit", player.Character)
+		character.Destroying:Once(function()
+			Iterate("CharacterDestroyed", player.Character)
+		end)
+	end
+
+	if player.Character then
+		CharacterInit(player.Character)
 	end
 
 	player.CharacterAdded:Connect(function(Character)
-		Iterate("CharacterInit", Character)
+		CharacterInit(Character)
 	end)
+end
+
+local function PlayerLeave(player)
+	Iterate("PlayerLeave", player)
 end
 
 task.spawn(function()
@@ -38,3 +49,4 @@ task.spawn(function()
 end)
 
 Players.PlayerAdded:Connect(PlayerInit)
+Players.PlayerRemoving:Connect(PlayerLeave)

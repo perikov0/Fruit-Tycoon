@@ -26,7 +26,6 @@ end
 
 function ButtonComponent:Init()
     local Component: ComponentsType.ButtonComponent = self
-
     
     Component.IconRotation = Value(Component.obj.Main.Icon.Rotation)
     Component.SizeFactor = Value(Component.obj.UIScale.Scale)
