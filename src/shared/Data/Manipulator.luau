@@ -4,16 +4,17 @@ local RunService = game:GetService("RunService")
 
 local Manipulator = {Cache = {}}
 
-local Handler; task.defer(function()
+local ServerModules = {}; task.defer(function()
 	if RunService:IsClient() then return end
-	Handler = require(ReplicatedStorage.Source.Server.ProfileHandler) --// Can ignore LSP error. It doesn't break when required on another thread.
-end)
+	ServerModules.Handler = require(ReplicatedStorage.Source.Server.ProfileHandler)
+	ServerModules.TycoonClaimHandler = require(ReplicatedStorage.Source.Server.TycoonClaimHandler)
+end)--// Can ignore LSP errors. It doesn't break when required on another thread.
 
-local RequestRemoteFn = Instance.new("RemoteFunction")
+local RequestRemoteFn = ReplicatedStorage.Remotes.RequestRemoteFn
 
 function Manipulator.GetData(playerId, key)
 	if RunService:IsClient() then 
-		return RequestRemoteFn:InvokeServer(playerId)
+		return RequestRemoteFn:InvokeServer(playerId, key)
 	end
 
 	if not Manipulator.Cache[playerId] then return end
@@ -24,18 +25,24 @@ function Manipulator.SetData(playerId, key, value, shouldSave)
 	local data = Manipulator.Cache[playerId]
 	if not data then return end
 	data[key] = value
+	
+	if table.find({"Cash", "Rebirths", "Gems"}, key) and RunService:IsServer() then
+		ServerModules.TycoonClaimHandler.UpdateStats(Players:GetPlayerByUserId(playerId))
+	end
 
 	local player = Players:GetPlayerByUserId(playerId)
 
 	if shouldSave and RunService:IsServer() then
-		Handler.SaveToProfile(player, key, value)
+		ServerModules.Handler.SaveToProfile(player, key, value)
 	end
 
 	return data[key]
 end
 
-RequestRemoteFn.OnServerInvoke = function(_, player: Player, key)
-	return Manipulator.GetData(player.UserId, key)
+if RunService:IsServer() then
+	RequestRemoteFn.OnServerInvoke = function(_, userId: Player, key)
+		return Manipulator.GetData(userId, key)
+	end
 end
 
 return Manipulator

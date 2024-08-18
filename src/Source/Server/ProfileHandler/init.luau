@@ -52,6 +52,8 @@ local function initProfile(player)
 			local loginTimes = DataManipulators.GetData(player.UserId, "LogInTimes")
 			DataManipulators.SetData(player.UserId, "LogInTimes", loginTimes+1, true)
 			DataManipulators.SetData(player.UserId, "LastTimeJoined", tick(), true)
+
+			player:SetAttribute("PROFILE_LOADED", true)
 		else
 			profile:Release()
 		end
