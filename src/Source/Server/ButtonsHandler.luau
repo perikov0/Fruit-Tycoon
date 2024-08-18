@@ -13,6 +13,7 @@ function ButtonClass.new(buttonInstance, player)
         ButtonInstance = buttonInstance,
         Purchased = false,
         Owner = player,
+        TycoonInstance = workspace.Tycoons[tostring(player:GetAttribute("TYCOON_SLOT"))],
     }, ButtonClass)
 end
 
@@ -21,6 +22,12 @@ function ButtonClass:Purchase()
     if cash < self.ButtonInstance:GetAttribute("Cost") then return end
     self.Purchased = true
     DataManipulator.SetData(self.Owner.UserId, "Cash", cash-self.ButtonInstance:GetAttribute("Cost"), true)
+    self:Appear()
+end
+
+function ButtonClass:Appear()
+    local unlock = self.ButtonInstance.Unlock.Value
+    unlock.Parent = self.TycoonInstance.Unlockables
 end
 
 function ButtonsHandler.PlayerInit(player: Player)
@@ -29,6 +36,7 @@ function ButtonsHandler.PlayerInit(player: Player)
 
     for _, button in CollectionService:GetTagged("BUTTON") do
         ButtonsHandler.Buttons[player][button:GetAttribute("Name")] = ButtonClass.new(button, player)
+        button.Unlock.Value.Parent = ReplicatedStorage.TycoonStorage[player.Name]
     end
 end
 

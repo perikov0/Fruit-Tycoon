@@ -45,8 +45,11 @@ function TycoonClaimHandler.UpdateStats(player)
 end
 
 function TycoonClaimHandler.PlayerInit(player: Player)
+    local tycoonFolder = Instance.new("Folder")
+    tycoonFolder.Name = player.Name
+    tycoonFolder.Parent = ReplicatedStorage.TycoonStorage
+    
     repeat task.wait() until player:GetAttribute("PROFILE_LOADED") == true
-
     local tycoonSlot = FindFirstOpenTycoon()
     TycoonClaimHandler.Tycoons[tycoonSlot].Owned = player
     TycoonClaimHandler.Tycoons[tycoonSlot].TimeLastOwned = workspace:GetServerTimeNow()
