@@ -1,6 +1,10 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local CollectionService = game:GetService("CollectionService")
+local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
+
 local DataManipulator = require(ReplicatedStorage.Shared.Data.Manipulator)
+local InstanceHandler = require(ReplicatedStorage.Source.Server.InstanceHandler)
 
 local ButtonsHandler = {}
 ButtonsHandler.Buttons = {}
@@ -10,23 +14,37 @@ ButtonClass.__index = ButtonClass
 
 function ButtonClass.new(buttonInstance, player)
     return setmetatable({
-        ButtonInstance = buttonInstance,
+        _buttonInstance = buttonInstance,
         Purchased = false,
         Owner = player,
         TycoonInstance = workspace.Tycoons[tostring(player:GetAttribute("TYCOON_SLOT"))],
     }, ButtonClass)
 end
 
+local TWEEN_TIME = 0.3
+
 function ButtonClass:Purchase()
     local cash = DataManipulator.GetData(self.Owner.UserId, "Cash")
-    if cash < self.ButtonInstance:GetAttribute("Cost") then return end
+    if cash < self._buttonInstance:GetAttribute("Cost") then return end
     self.Purchased = true
-    DataManipulator.SetData(self.Owner.UserId, "Cash", cash-self.ButtonInstance:GetAttribute("Cost"), true)
     self:Appear()
+    DataManipulator.SetData(self.Owner.UserId, "Cash", cash-self._buttonInstance:GetAttribute("Cost"), true)
+    task.spawn(InstanceHandler.CreateInstance, self.Owner, self._buttonInstance)
+
+    local elapsed = 1
+    local conn; conn = RunService.Heartbeat:Connect(function(dt)
+        elapsed -= dt/TWEEN_TIME
+        self._buttonInstance:ScaleTo(TweenService:GetValue(math.max(elapsed, 0.01), Enum.EasingStyle.Sine, Enum.EasingDirection.InOut))
+    end)
+
+    task.delay(TWEEN_TIME, function()
+        conn:Disconnect()
+        self._buttonInstance.Parent = ReplicatedStorage.ButtonStorage
+    end)
 end
 
 function ButtonClass:Appear()
-    local unlock = self.ButtonInstance.Unlock.Value
+    local unlock = self._buttonInstance.Unlock.Value
     unlock.Parent = self.TycoonInstance.Unlockables
 end
 

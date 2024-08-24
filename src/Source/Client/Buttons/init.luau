@@ -9,7 +9,7 @@ local Buttons = {}
 
 function Buttons.PlayerInit()
     repeat task.wait() until LocalPlayer:GetAttribute("TYCOON_SLOT")
-    task.wait(2)
+    task.wait(0.5)
     local sortedButtons = {}
 
     for _, button in CollectionService:GetTagged("BUTTON") do

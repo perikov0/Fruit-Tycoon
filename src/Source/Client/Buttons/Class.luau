@@ -22,9 +22,10 @@ function ButtonClass.new(buttonInstance: Model & {PrimaryPart: Part})
         ButtonUI = buttonUI,
         Purchased = false,
         TouchConn = nil,
+        ReqLinked = {},
         PurchaseCallback = function()
-            warn("No callback added to required objects")
-        end
+            --warn("No callback added to required objects")
+        end,
     }, ButtonClass)
 
     task.delay(1, function()
@@ -39,9 +40,13 @@ function ButtonClass.new(buttonInstance: Model & {PrimaryPart: Part})
         end)
     end)
 
-    if ButtonClass.Buttons[requirements] then
-        ButtonClass.Buttons[requirements].PurchaseCallback = function()
-            object:UpdateAppearance()
+    local reqButton = ButtonClass.Buttons[requirements]
+    if reqButton then
+        reqButton.ReqLinked[buttonInstance:GetAttribute("Name")] = object
+        reqButton.PurchaseCallback = function()
+            for _, targetObj in reqButton.ReqLinked do
+                targetObj:UpdateAppearance()
+            end
         end -- Calls when the required button is pressed.
     end
 
@@ -51,7 +56,6 @@ end
 
 function ButtonClass:UpdateAppearance()
     local requirements = self.ButtonInstance:GetAttribute("Requirements")
-    print(requirements)
 
     local requirementsButtonObject = ButtonClass.Buttons[requirements]
     if (requirementsButtonObject) and (not requirementsButtonObject.Purchased) then
@@ -68,7 +72,6 @@ function ButtonClass:UpdateAppearance()
     self.ButtonUI.Frame.Cost.Text = "$"..self.ButtonInstance:GetAttribute("Cost")
 end
 
-local TWEEN_TIME = 0.3
 function ButtonClass:Purchase()
     local cost = self.ButtonInstance:GetAttribute("Cost")
     local playerCash = DataManipulator.GetData(LocalPlayer.UserId, "Cash")
@@ -78,20 +81,6 @@ function ButtonClass:Purchase()
     self.Purchased = true
     self.PurchaseCallback()
     self.ButtonInstance.PrimaryPart.Color = Color3.fromRGB(116, 232, 131)
-    
-    local elapsed = 1
-    local conn; conn = RunService.Heartbeat:Connect(function(dt)
-        elapsed -= dt/TWEEN_TIME
-        if elapsed <= 0 then
-            conn:Disconnect()
-            return
-        end
-        self.ButtonInstance:ScaleTo(TweenService:GetValue(elapsed, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut))
-    end)
-
-    task.delay(TWEEN_TIME, function()
-        self.ButtonInstance.Parent = ReplicatedStorage.ButtonStorage
-    end)
 
     ReplicatedStorage.Remotes.PurchaseButton:FireServer(self.ButtonInstance:GetAttribute("Name"))
 end
