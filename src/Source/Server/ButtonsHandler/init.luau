@@ -56,10 +56,20 @@ end
 function ButtonsHandler.PlayerInit(player: Player)
     repeat task.wait() until player:GetAttribute("TYCOON_SLOT")
     ButtonsHandler.Buttons[player] = {}
+    task.wait(0.5)
+    local sortedButtons = {}
 
-    for _, button in CollectionService:GetTagged("BUTTON") do
-        ButtonsHandler.Buttons[player][button:GetAttribute("Name")] = ButtonClass.new(button, player)
-        button.Unlock.Value.Parent = ReplicatedStorage.TycoonStorage[player.Name]
+    for _, button in workspace.Tycoons[player:GetAttribute("TYCOON_SLOT")].Buttons:GetChildren() do
+        local order = button:GetAttribute("Order")
+        sortedButtons[order] = sortedButtons[order] or {}
+        table.insert(sortedButtons[order], button)
+    end
+
+    for _, buttonGroup in sortedButtons do
+        for _, button in buttonGroup do
+            ButtonsHandler.Buttons[player][button:GetAttribute("Name")] = ButtonClass.new(button, player)
+            button.Unlock.Value.Parent = ReplicatedStorage.TycoonStorage[player.Name]
+        end
     end
 end
 

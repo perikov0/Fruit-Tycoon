@@ -1,5 +1,4 @@
 local Players = game:GetService("Players")
-local CollectionService = game:GetService("CollectionService")
 
 local LocalPlayer = Players.LocalPlayer
 
@@ -12,7 +11,7 @@ function Buttons.PlayerInit()
     task.wait(0.5)
     local sortedButtons = {}
 
-    for _, button in CollectionService:GetTagged("BUTTON") do
+    for _, button in workspace.Tycoons[LocalPlayer:GetAttribute("TYCOON_SLOT")].Buttons:GetChildren() do
         local order = button:GetAttribute("Order")
         sortedButtons[order] = sortedButtons[order] or {}
         table.insert(sortedButtons[order], button)

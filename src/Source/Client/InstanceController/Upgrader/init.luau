@@ -1,6 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local DataMap = require(script.DataMap)
+local DataMap = require(ReplicatedStorage.Shared.Informations.DataMapUpgrader)
 local Trove = require(ReplicatedStorage.Shared.Packages.Trove)
 local ProxyTable = require(ReplicatedStorage.Shared.Packages.ProxyTable)
 

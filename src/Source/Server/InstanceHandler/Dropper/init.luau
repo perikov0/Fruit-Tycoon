@@ -1,6 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local DataMap = require(script.DataMap)
+local DataMap = require(ReplicatedStorage.Shared.Informations.DataMapDropper)
 local Trove = require(ReplicatedStorage.Shared.Packages.Trove)
 local ProxyTable = require(ReplicatedStorage.Shared.Packages.ProxyTable)
 
@@ -14,9 +14,8 @@ function Dropper.new(owner: Player, instance: Instance)
         _instance = instance,
         _trove = Trove.new(),
         _owner = owner,
-        Attributes = DataMap[instance.Name],
+        Attributes = DataMap[instance.Name].Server,
         Objects = {},
-        UpgradesRanThru = {},
         Active = true,
     }, Dropper)
 end

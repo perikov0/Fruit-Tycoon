@@ -59,7 +59,6 @@ function ButtonClass:UpdateAppearance()
 
     local requirementsButtonObject = ButtonClass.Buttons[requirements]
     if (requirementsButtonObject) and (not requirementsButtonObject.Purchased) then
-        print("Cannot ever buy")
         self.ButtonInstance.Parent = ReplicatedStorage.ButtonStorage
         return
     end
@@ -76,7 +75,7 @@ function ButtonClass:Purchase()
     local cost = self.ButtonInstance:GetAttribute("Cost")
     local playerCash = DataManipulator.GetData(LocalPlayer.UserId, "Cash")
     if playerCash < cost then return end
-
+    
     self.TouchConn:Disconnect()
     self.Purchased = true
     self.PurchaseCallback()

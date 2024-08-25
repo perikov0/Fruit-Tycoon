@@ -1,6 +1,11 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local PhysicsService = game:GetService("PhysicsService")
 local ProxyTable = require(ReplicatedStorage.Shared.Packages.ProxyTable)
 local FruitsProxy = ProxyTable.new("Fruits")
+
+PhysicsService:RegisterCollisionGroup("Fruit")
+PhysicsService:CollisionGroupSetCollidable("Fruit", "Fruit", false)
+
 local processedFruits = {}
 
 local InstanceHandler = {}
@@ -23,7 +28,7 @@ end
 
 function InstanceHandler.CreateInstance(owner: Player, buttonInstance: Model & {Unlock: ObjectValue})
     local instance = buttonInstance.Unlock.Value
-    local instanceType: typePossibilities = instance:GetAttribute("InstanceType") -- me???
+    local instanceType: typePossibilities = instance:GetAttribute("InstanceType")
     local constructor = InstanceHandler.Constructors[instanceType]
     if not constructor then return end
     local instanceObject = constructor.new(owner, instance)
@@ -36,12 +41,14 @@ end
 ReplicatedStorage.Remotes.UpgradeFruit.OnServerEvent:Connect(function(player, upgraderName, GUID)
     local upgraderObject = InstanceHandler.Cache[player.Name].Upgrader[upgraderName]
     local fruitObj = FruitsProxy:Get(GUID)
-    fruitObj.DropperObject:GetAttribute("OnModify")(fruitObj)
+    local canModify = fruitObj.DropperObject:GetAttribute("CanModify")(fruitObj, upgraderName)
+    if not canModify then return end
     upgraderObject.Attributes.OnModify(fruitObj)
 end)
 
 ReplicatedStorage.Remotes.ProcessFruit.OnServerEvent:Connect(function(player, GUID)
-    if processedFruits[player.UserId][GUID] then warn("Reprocessed") return end
+    if processedFruits[player.UserId][GUID] then return end
+
     processedFruits[player.UserId][GUID] = true
 
     local fruitObj = FruitsProxy:Get(GUID)
