@@ -1,9 +1,9 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
-local TweenService = game:GetService("TweenService")
-local RunService = game:GetService("RunService")
 
 local DataManipulator = require(ReplicatedStorage.Shared.Data.Manipulator)
+local InstanceController = require(ReplicatedStorage.Source.Client.InstanceController)
+local PurchaseCallbacks = require(script.Parent.PurchaseCallbacks)
 
 local LocalPlayer = Players.LocalPlayer
 
@@ -83,6 +83,12 @@ function ButtonClass:Purchase()
     self.ButtonInstance.PrimaryPart.Color = Color3.fromRGB(116, 232, 131)
 
     ReplicatedStorage.Remotes.PurchaseButton:FireServer(self.ButtonInstance:GetAttribute("Name"))
+
+    InstanceController.CreateInstance(self.ButtonInstance)
+
+    if PurchaseCallbacks[self.ButtonInstance:GetAttribute("Name")] then
+        PurchaseCallbacks[self.ButtonInstance:GetAttribute("Name")](self)
+    end
 end
 
 return ButtonClass

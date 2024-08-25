@@ -2,7 +2,7 @@ local Players = game:GetService("Players")
 
 local LocalPlayer = Players.LocalPlayer
 
-local ButtonHandler = {}
+local Buttons = {}
 
 local Components = require(script.Parent.Components)
 local ComponentTypes = require(script.Parent.Components.ComponentTypes)
@@ -15,13 +15,13 @@ local function CreateButtonObject(...): ComponentTypes.ButtonComponent
     return object
 end
 
-function ButtonHandler.CharacterInit(character)
-    ButtonHandler.Character = character
+function Buttons.CharacterInit(character)
+    Buttons.Character = character
 end
 
-function ButtonHandler.PlayerInit()
+function Buttons.PlayerInit()
     local playerUI = LocalPlayer:WaitForChild("PlayerGui")
     task.wait()
 end
 
-return ButtonHandler
+return Buttons

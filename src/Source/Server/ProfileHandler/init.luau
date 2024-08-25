@@ -54,6 +54,11 @@ local function initProfile(player)
 			DataManipulators.SetData(player.UserId, "LastTimeJoined", tick(), true)
 
 			player:SetAttribute("PROFILE_LOADED", true)
+
+			DataManipulators:BindToDataUpdate(player.UserId, function(value, key, shouldSave)
+				if not shouldSave then return end
+				ProfileHandler.SaveToProfile(player, key, value)
+			end)
 		else
 			profile:Release()
 		end

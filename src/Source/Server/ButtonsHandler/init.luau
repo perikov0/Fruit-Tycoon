@@ -5,6 +5,7 @@ local TweenService = game:GetService("TweenService")
 
 local DataManipulator = require(ReplicatedStorage.Shared.Data.Manipulator)
 local InstanceHandler = require(ReplicatedStorage.Source.Server.InstanceHandler)
+local PurchaseCallbacks = require(script.PurchaseCallbacks)
 
 local ButtonsHandler = {}
 ButtonsHandler.Buttons = {}
@@ -41,6 +42,10 @@ function ButtonClass:Purchase()
         conn:Disconnect()
         self._buttonInstance.Parent = ReplicatedStorage.ButtonStorage
     end)
+
+    if PurchaseCallbacks[self._buttonInstance:GetAttribute("Name")] then
+        PurchaseCallbacks[self._buttonInstance:GetAttribute("Name")](self)
+    end
 end
 
 function ButtonClass:Appear()

@@ -1,14 +1,8 @@
-local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
 local Manipulator = {Cache = {}}
-
-local ServerModules = {}; task.defer(function()
-	if RunService:IsClient() then return end
-	ServerModules.Handler = require(ReplicatedStorage.Source.Server.ProfileHandler)
-	ServerModules.TycoonClaimHandler = require(ReplicatedStorage.Source.Server.TycoonClaimHandler)
-end)--// Can ignore LSP errors. It doesn't break when required on another thread.
+Manipulator.Binds = {}
 
 local RequestRemoteFn = ReplicatedStorage.Remotes.RequestRemoteFn
 
@@ -18,25 +12,28 @@ function Manipulator.GetData(playerId, key)
 	end
 
 	if not Manipulator.Cache[playerId] then return end
-	return Manipulator.Cache[playerId][key]
+	return key and Manipulator.Cache[playerId][key] or Manipulator.Cache[playerId]
 end
 
-function Manipulator.SetData(playerId, key, value, shouldSave)
+function Manipulator.SetData(playerId, key, value, ...)
 	local data = Manipulator.Cache[playerId]
 	if not data then return end
 	data[key] = value
 	
-	if table.find({"Cash", "Rebirths", "Gems"}, key) and RunService:IsServer() then
-		ServerModules.TycoonClaimHandler.UpdateStats(Players:GetPlayerByUserId(playerId))
-	end
-
-	local player = Players:GetPlayerByUserId(playerId)
-
-	if shouldSave and RunService:IsServer() then
-		ServerModules.Handler.SaveToProfile(player, key, value)
+	for _, fn in (Manipulator.Binds[playerId] or {}) do
+		fn(value, key, ...)
 	end
 
 	return data[key]
+end
+
+function Manipulator:BindToDataUpdate(playerId, fn)
+	Manipulator.Binds[playerId] = Manipulator.Binds[playerId] or {}
+	return table.insert(Manipulator.Binds[playerId], fn)
+end
+
+function Manipulator:UnbindFromDataUpdate(playerId, index)
+	table.remove(Manipulator.Binds[playerId], index)
 end
 
 if RunService:IsServer() then

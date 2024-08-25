@@ -36,9 +36,9 @@ function TycoonClaimHandler.UpdateStats(player)
     local tycoonStats = workspace.Tycoons[tostring(tycoonSlot)].TycoonStats
     local surfaceUI = tycoonStats.Owned
     surfaceUI.Frame.Headshot.Image = Players:GetUserThumbnailAsync(player.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size420x420)
-    surfaceUI.Frame.RebirthsDisplay.Text = "Rebirths: "..DataManipulator.GetData(player.UserId, "Rebirths")
-    surfaceUI.Frame.CashDisplay.Text = "Cash: "..DataManipulator.GetData(player.UserId, "Cash")
-    surfaceUI.Frame.GemsDisplay.Text = "Gems: "..DataManipulator.GetData(player.UserId, "Gems")
+    surfaceUI.Frame.RebirthsDisplay.Text = "Rebirths: "..math.round(DataManipulator.GetData(player.UserId, "Rebirths"))
+    surfaceUI.Frame.CashDisplay.Text = "Cash: "..math.round(DataManipulator.GetData(player.UserId, "Cash"))
+    surfaceUI.Frame.GemsDisplay.Text = "Gems: "..math.round(DataManipulator.GetData(player.UserId, "Gems"))
     surfaceUI.TycoonName.Text = player.Name.."'s Fruit Tycoon"
     tycoonStats.Owned.Enabled = true
     tycoonStats.NotOwned.Enabled = false
@@ -60,10 +60,18 @@ function TycoonClaimHandler.PlayerInit(player: Player)
 
     CharacterInit(player.Character)
 
+    DataManipulator:BindToDataUpdate(player.UserId, function(value, key)
+        if table.find({"Cash", "Rebirths", "Gems"}, key) then
+            TycoonClaimHandler.UpdateStats(player)
+            ReplicatedStorage.Remotes.UpdateDisplayValues:FireClient(player)
+        end
+    end)
+
     TycoonClaimHandler.Callbacks[player] = function()
         TycoonClaimHandler.Tycoons[tycoonSlot].Owned = nil
         tycoonStats.Owned.Enabled = false
         tycoonStats.NotOwned.Enabled = true
+        DataManipulator.Binds[player.UserId] = nil
     end -- Cleanup callback
 end
 
