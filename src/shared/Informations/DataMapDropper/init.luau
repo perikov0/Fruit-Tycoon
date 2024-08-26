@@ -9,6 +9,31 @@ local function Construct(...)
 	return Class.new(...)
 end
 
+local function fetchConstructParams(...)
+	local params = {...}
+
+	if RunService:IsClient() then
+		return {
+			FruitName = params[1],
+			Scale = params[2],
+			GUID = params[3],
+			DropperObject = params[4],
+			BaseValue = params[5],
+		}
+	end
+
+	return {
+		FruitName = params[1],
+		GUID = params[2],
+		DropperObject = params[3],
+		BaseValue = params[4]
+	}
+end
+
+local function newguid()
+	return HttpService:GenerateGUID()
+end
+
 do
 	local BaseValue = 1
 	local Frequency = 4
@@ -16,13 +41,8 @@ do
 	DataMap["APPLE DROPPER 1"] = {
 		Client = {
 			Drop = function(GUID, dropperObject)
-				return Construct {
-					FruitName = FruitName,
-					Scale = 1,
-					GUID = GUID,
-					DropperObject = dropperObject,
-					BaseValue = BaseValue
-				}
+				local params = fetchConstructParams(FruitName,1,GUID,dropperObject,BaseValue)
+				return Construct(params)
 			end,
 			OnModify = function()
 		
@@ -34,12 +54,8 @@ do
 		},
 		Server = {
 			Drop = function(dropperObject)
-				return Construct {
-					FruitName = FruitName,
-					GUID = HttpService:GenerateGUID(),
-					DropperObject = dropperObject,
-					BaseValue = BaseValue
-				}
+				local params = fetchConstructParams(FruitName,newguid(),dropperObject,BaseValue)
+				return Construct(params)
 			end,
 			CanModify = function(fruitObj, upgradeName)
 				return fruitObj:Modify(upgradeName)
@@ -59,13 +75,8 @@ do
 	DataMap["APPLE DROPPER 2"] = {
 		Client = {
 			Drop = function(GUID, dropperObject)
-				return Construct {
-					FruitName = FruitName,
-					Scale = 1.1,
-					GUID = GUID,
-					DropperObject = dropperObject,
-					BaseValue = BaseValue
-				}
+				local params = fetchConstructParams(FruitName,1.2,GUID,dropperObject,BaseValue)
+				return Construct(params)
 			end,
 			OnModify = function()
 		
@@ -77,12 +88,8 @@ do
 		},
 		Server = {
 			Drop = function(dropperObject)
-				return Construct {
-					FruitName = FruitName,
-					GUID = HttpService:GenerateGUID(),
-					DropperObject = dropperObject,
-					BaseValue = BaseValue
-				}
+				local params = fetchConstructParams(FruitName,newguid(),dropperObject,BaseValue)
+				return Construct(params)
 			end,
 			CanModify = function(fruitObj, upgradeName)
 				return fruitObj:Modify(upgradeName)
@@ -102,13 +109,8 @@ do
 	DataMap["APPLE DROPPER 3"] = {
 		Client = {
 			Drop = function(GUID, dropperObject)
-				return Construct {
-					FruitName = FruitName,
-					Scale = 1.3,
-					GUID = GUID,
-					DropperObject = dropperObject,
-					BaseValue = BaseValue
-				}
+				local params = fetchConstructParams(FruitName,1.3,GUID,dropperObject,BaseValue)
+				return Construct(params)
 			end,
 			OnModify = function()
 		
@@ -120,12 +122,8 @@ do
 		},
 		Server = {
 			Drop = function(dropperObject)
-				return Construct {
-					FruitName = FruitName,
-					GUID = HttpService:GenerateGUID(),
-					DropperObject = dropperObject,
-					BaseValue = BaseValue
-				}
+				local params = fetchConstructParams(FruitName,newguid(),dropperObject,BaseValue)
+				return Construct(params)
 			end,
 			CanModify = function(fruitObj, upgradeName)
 				return fruitObj:Modify(upgradeName)
@@ -139,20 +137,14 @@ do
 end
 
 do
-	local BaseValue = 7
+	local BaseValue = 1
 	local Frequency = 4
-	local FruitName = "Banana"
-	DataMap["BANANA DROPPER 1"] = {
+	local FruitName = "DiamondApple"
+	DataMap["DIAMOND APPLE DROPPER 1"] = {
 		Client = {
 			Drop = function(GUID, dropperObject)
-				print("A")
-				return Construct {
-					FruitName = FruitName,
-					Scale = 1,
-					GUID = GUID,
-					DropperObject = dropperObject,
-					BaseValue = BaseValue
-				}
+				local params = fetchConstructParams(FruitName,1,GUID,dropperObject,BaseValue)
+				return Construct(params)
 			end,
 			OnModify = function()
 		
@@ -164,12 +156,8 @@ do
 		},
 		Server = {
 			Drop = function(dropperObject)
-				return Construct {
-					FruitName = FruitName,
-					GUID = HttpService:GenerateGUID(),
-					DropperObject = dropperObject,
-					BaseValue = BaseValue
-				}
+				local params = fetchConstructParams(FruitName,newguid(),dropperObject,BaseValue)
+				return Construct(params)
 			end,
 			CanModify = function(fruitObj, upgradeName)
 				return fruitObj:Modify(upgradeName)
@@ -183,19 +171,14 @@ do
 end
 
 do
-	local BaseValue = 10
+	local BaseValue = 2
 	local Frequency = 4
-	local FruitName = "Banana"
-	DataMap["BANANA DROPPER 2"] = {
+	local FruitName = "DiamondApple"
+	DataMap["DIAMOND APPLE DROPPER 2"] = {
 		Client = {
 			Drop = function(GUID, dropperObject)
-				return Construct {
-					FruitName = FruitName,
-					Scale = 1.1,
-					GUID = GUID,
-					DropperObject = dropperObject,
-					BaseValue = BaseValue
-				}
+				local params = fetchConstructParams(FruitName,1.2,GUID,dropperObject,BaseValue)
+				return Construct(params)
 			end,
 			OnModify = function()
 		
@@ -207,12 +190,8 @@ do
 		},
 		Server = {
 			Drop = function(dropperObject)
-				return Construct {
-					FruitName = FruitName,
-					GUID = HttpService:GenerateGUID(),
-					DropperObject = dropperObject,
-					BaseValue = BaseValue
-				}
+				local params = fetchConstructParams(FruitName,newguid(),dropperObject,BaseValue)
+				return Construct(params)
 			end,
 			CanModify = function(fruitObj, upgradeName)
 				return fruitObj:Modify(upgradeName)
@@ -226,19 +205,14 @@ do
 end
 
 do
-	local BaseValue = 14
+	local BaseValue = 5
 	local Frequency = 4
-	local FruitName = "Banana"
-	DataMap["BANANA DROPPER 3"] = {
+	local FruitName = "DiamondApple"
+	DataMap["DIAMOND APPLE DROPPER 3"] = {
 		Client = {
 			Drop = function(GUID, dropperObject)
-				return Construct {
-					FruitName = FruitName,
-					Scale = 1.5,
-					GUID = GUID,
-					DropperObject = dropperObject,
-					BaseValue = BaseValue
-				}
+				local params = fetchConstructParams(FruitName,1.3,GUID,dropperObject,BaseValue)
+				return Construct(params)
 			end,
 			OnModify = function()
 		
@@ -250,12 +224,8 @@ do
 		},
 		Server = {
 			Drop = function(dropperObject)
-				return Construct {
-					FruitName = FruitName,
-					GUID = HttpService:GenerateGUID(),
-					DropperObject = dropperObject,
-					BaseValue = BaseValue
-				}
+				local params = fetchConstructParams(FruitName,newguid(),dropperObject,BaseValue)
+				return Construct(params)
 			end,
 			CanModify = function(fruitObj, upgradeName)
 				return fruitObj:Modify(upgradeName)

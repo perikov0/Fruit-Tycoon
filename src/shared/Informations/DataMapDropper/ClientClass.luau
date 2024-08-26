@@ -9,6 +9,11 @@ local ProxyTable = require(ReplicatedStorage.Shared.Packages.ProxyTable)
 
 local FruitsProxy = ProxyTable.new("Fruits")
 
+local AnimationStyles = {}
+for _, style in script.Parent.AnimationStyles:GetChildren() do
+	AnimationStyles[style.Name] = require(style)
+end
+
 local FruitClass = {
     __add = function(self, value)
         self._value += value
@@ -30,6 +35,7 @@ function FruitClass.new(properties)
 	fruit.Parent = nil
 	fruit.CollisionGroup = "Fruit"
 
+	
 	return setmetatable({
 		_value = properties.BaseValue,
 		ValueDisplay = ReplicatedStorage.Assets.ValueDisplay:Clone(),
@@ -51,7 +57,7 @@ end
 
 function FruitClass:Spawn()
 	FruitsProxy:Set(self.GUID, self)
-	local spawner = self.DropperObject._instance.PrimaryPart
+	local spawner = self.DropperObject:GetInstance().PrimaryPart
 	local offset = -(Vector3.yAxis*(spawner.Size.Y/2 + self.Fruit.Size.Y/2 + 1))
 	self.Fruit.Parent = workspace.Fruits
 	self.Fruit.CFrame = (spawner.CFrame * CFrame.Angles(math.pi/2, 0, math.pi/2))+offset

@@ -31,6 +31,10 @@ function Dropper:Connect()
     until not self.Active
 end
 
+function Dropper:GetInstance()
+    return self._instance
+end
+
 function Dropper:GetAttribute(name)
     return self.Attributes[name]
 end

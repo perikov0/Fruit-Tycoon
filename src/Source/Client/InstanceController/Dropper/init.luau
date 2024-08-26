@@ -20,6 +20,10 @@ function Dropper:DropFruit(GUID)
     return fruitObj
 end
 
+function Dropper:GetInstance()
+    return self._instance
+end
+
 function Dropper:GetAttribute(name)
     return self.Attributes[name]
 end
