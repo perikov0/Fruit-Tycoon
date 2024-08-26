@@ -1,5 +1,9 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
 local Manipulator = require(ReplicatedStorage.Shared.Data.Manipulator)
+local ProxyTable = require(ReplicatedStorage.Shared.Packages.ProxyTable)
+
+local FruitsProxy = ProxyTable.new("Fruits")
 
 local FruitClass = {
     __add = function(self, value)

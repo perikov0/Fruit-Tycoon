@@ -3,9 +3,6 @@ local PhysicsService = game:GetService("PhysicsService")
 local ProxyTable = require(ReplicatedStorage.Shared.Packages.ProxyTable)
 local FruitsProxy = ProxyTable.new("Fruits")
 
-PhysicsService:RegisterCollisionGroup("Fruit")
-PhysicsService:CollisionGroupSetCollidable("Fruit", "Fruit", false)
-
 local processedFruits = {}
 
 local InstanceHandler = {}
@@ -15,6 +12,12 @@ InstanceHandler.Constructors = {
 }
 InstanceHandler.Cache = {}
 type typePossibilities = "Dropper" | "Upgrader"
+
+function InstanceHandler.ServerInit()
+    task.wait()
+    PhysicsService:RegisterCollisionGroup("Fruit")
+    PhysicsService:CollisionGroupSetCollidable("Fruit", "Fruit", false)
+end
 
 function InstanceHandler.PlayerInit(player)
     processedFruits[player.UserId] = {}
@@ -48,7 +51,6 @@ end)
 
 ReplicatedStorage.Remotes.ProcessFruit.OnServerEvent:Connect(function(player, GUID)
     if processedFruits[player.UserId][GUID] then return end
-
     processedFruits[player.UserId][GUID] = true
 
     local fruitObj = FruitsProxy:Get(GUID)

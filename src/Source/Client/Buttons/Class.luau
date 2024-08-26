@@ -75,7 +75,6 @@ function ButtonClass:Purchase()
     local cost = self.ButtonInstance:GetAttribute("Cost")
     local playerCash = DataManipulator.GetData(LocalPlayer.UserId, "Cash")
     if playerCash < cost then return end
-    
     self.TouchConn:Disconnect()
     self.Purchased = true
     self.PurchaseCallback()

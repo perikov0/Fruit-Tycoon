@@ -5,6 +5,9 @@ local LocalPlayer = Players.LocalPlayer
 local Fruits = ReplicatedStorage.Assets.Fruits
 
 local Manipulator = require(ReplicatedStorage.Shared.Data.Manipulator)
+local ProxyTable = require(ReplicatedStorage.Shared.Packages.ProxyTable)
+
+local FruitsProxy = ProxyTable.new("Fruits")
 
 local FruitClass = {
     __add = function(self, value)
@@ -25,6 +28,7 @@ function FruitClass.new(properties)
 	fruit.Parent = Instance.new("Model")
 	fruit.Parent:ScaleTo(math.max(properties.Scale or 1, 0.01))
 	fruit.Parent = nil
+	fruit.CollisionGroup = "Fruit"
 
 	return setmetatable({
 		_value = properties.BaseValue,
@@ -46,6 +50,7 @@ function FruitClass:SetAttribute(propertyName, propertyValue)
 end
 
 function FruitClass:Spawn()
+	FruitsProxy:Set(self.GUID, self)
 	local spawner = self.DropperObject._instance.PrimaryPart
 	local offset = -(Vector3.yAxis*(spawner.Size.Y/2 + self.Fruit.Size.Y/2 + 1))
 	self.Fruit.Parent = workspace.Fruits
@@ -59,7 +64,6 @@ end
 
 function FruitClass:Process()
 	if not self.Active then return end
-	self.Fruit.CollisionGroup = "Fruit"
 
 	local originalCash = Manipulator.GetData(LocalPlayer.UserId, "Cash")
 	Manipulator.SetData(LocalPlayer.UserId, "Cash", originalCash + self._value, true)

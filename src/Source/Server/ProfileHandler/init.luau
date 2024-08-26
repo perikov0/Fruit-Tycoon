@@ -10,7 +10,7 @@ local ProfileTemplate = require(ReplicatedStorage.Shared.Data.Template)
 local ProfileService = require(script.ProfileService)
 local DataManipulators = require(ReplicatedStorage.Shared.Data.Manipulator)
 
-local DataKey = "TestData_01"
+local DataKey = "TestData_02"
 
 local ProfileStore = ProfileService.GetProfileStore(DataKey, ProfileTemplate)
 

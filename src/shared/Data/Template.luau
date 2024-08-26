@@ -4,5 +4,5 @@ return {
 
 	Gems = 0,
 	Rebirths = 0,
-	Cash = 10000,
+	Cash = 1000000,
 }

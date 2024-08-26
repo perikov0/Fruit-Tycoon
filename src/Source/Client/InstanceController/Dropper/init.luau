@@ -2,12 +2,9 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local DataMap = require(ReplicatedStorage.Shared.Informations.DataMapDropper)
 local Trove = require(ReplicatedStorage.Shared.Packages.Trove)
-local ProxyTable = require(ReplicatedStorage.Shared.Packages.ProxyTable)
 
 local Dropper = {}
 Dropper.__index = Dropper
-
-local FruitsProxy = ProxyTable.new("Fruits")
 
 function Dropper.new(instance: Instance)
     return setmetatable({
@@ -20,7 +17,6 @@ end
 function Dropper:DropFruit(GUID)
     local fruitObj = self.Attributes.Drop(GUID, self)
     fruitObj:Spawn()
-    FruitsProxy:Set(fruitObj.GUID, fruitObj)
     return fruitObj
 end
 

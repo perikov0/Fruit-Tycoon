@@ -1,5 +1,4 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local CollectionService = game:GetService("CollectionService")
 local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
 
@@ -29,6 +28,7 @@ function ButtonClass:Purchase()
     if cash < self._buttonInstance:GetAttribute("Cost") then return end
     self.Purchased = true
     self:Appear()
+
     DataManipulator.SetData(self.Owner.UserId, "Cash", cash-self._buttonInstance:GetAttribute("Cost"), true)
     task.spawn(InstanceHandler.CreateInstance, self.Owner, self._buttonInstance)
 
@@ -71,6 +71,7 @@ function ButtonsHandler.PlayerInit(player: Player)
             button.Unlock.Value.Parent = ReplicatedStorage.TycoonStorage[player.Name]
         end
     end
+
 end
 
 function ButtonsHandler.PlayerLeave(player: Player)
@@ -78,6 +79,7 @@ function ButtonsHandler.PlayerLeave(player: Player)
 end
 
 ReplicatedStorage.Remotes.PurchaseButton.OnServerEvent:Connect(function(player: Player, buttonPurchased)
+    print(buttonPurchased)
     ButtonsHandler.Buttons[player][buttonPurchased]:Purchase()
 end)
 
