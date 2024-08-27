@@ -1,16 +1,14 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ProxyTable = require(ReplicatedStorage.Shared.Packages.ProxyTable)
+
+local GlobalProxy = ProxyTable.new("Global")
+
 local DataMapUpgrader = {}
 
-DataMapUpgrader["UPGRADE 1"] = {
+DataMapUpgrader["DIAMOND UPGRADER"] = {
 	OnModify = function(fruitObj)
-		fruitObj *= 1.2
-		fruitObj += 2
-	end
-}
-
-DataMapUpgrader["UPGRADE 2"] = {
-	OnModify = function(fruitObj)
-		fruitObj *= 1.2
-		fruitObj += 2
+		print(GlobalProxy:Get())
+		fruitObj *= if GlobalProxy:Get("DIAMOND UPGRADER EXTENDER") == true then 1.8 else 1.2
 	end
 }
 

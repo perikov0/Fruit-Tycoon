@@ -38,6 +38,7 @@ function FruitClass:Process()
 end
 
 function FruitClass:Modify(upgradeName)
+	print(upgradeName)
 	if self.Upgraders[upgradeName] then return false end
 	self.Upgraders[upgradeName] = true
 	return self.Upgraders[upgradeName]

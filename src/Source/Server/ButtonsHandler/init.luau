@@ -14,7 +14,7 @@ ButtonClass.__index = ButtonClass
 
 function ButtonClass.new(buttonInstance, player)
     return setmetatable({
-        _buttonInstance = buttonInstance,
+        ButtonInstance = buttonInstance,
         Purchased = false,
         Owner = player,
         TycoonInstance = workspace.Tycoons[tostring(player:GetAttribute("TYCOON_SLOT"))],
@@ -25,38 +25,37 @@ local TWEEN_TIME = 0.3
 
 function ButtonClass:Purchase()
     local cash = DataManipulator.GetData(self.Owner.UserId, "Cash")
-    if cash < self._buttonInstance:GetAttribute("Cost") then return end
+    if cash < self.ButtonInstance:GetAttribute("Cost") then return end
     self.Purchased = true
     self:Appear()
 
-    DataManipulator.SetData(self.Owner.UserId, "Cash", cash-self._buttonInstance:GetAttribute("Cost"), true)
-    task.spawn(InstanceHandler.CreateInstance, self.Owner, self._buttonInstance)
+    DataManipulator.SetData(self.Owner.UserId, "Cash", cash-self.ButtonInstance:GetAttribute("Cost"), true)
+    task.spawn(InstanceHandler.CreateInstance, self.Owner, self.ButtonInstance)
 
     local elapsed = 1
     local conn; conn = RunService.Heartbeat:Connect(function(dt)
         elapsed -= dt/TWEEN_TIME
-        self._buttonInstance:ScaleTo(TweenService:GetValue(math.max(elapsed, 0.01), Enum.EasingStyle.Sine, Enum.EasingDirection.InOut))
+        self.ButtonInstance:ScaleTo(TweenService:GetValue(math.max(elapsed, 0.01), Enum.EasingStyle.Sine, Enum.EasingDirection.InOut))
     end)
 
     task.delay(TWEEN_TIME, function()
         conn:Disconnect()
-        self._buttonInstance.Parent = ReplicatedStorage.ButtonStorage
+        self.ButtonInstance.Parent = ReplicatedStorage.ButtonStorage
     end)
-
-    if PurchaseCallbacks[self._buttonInstance:GetAttribute("Name")] then
-        PurchaseCallbacks[self._buttonInstance:GetAttribute("Name")](self)
+    
+    if PurchaseCallbacks[self.ButtonInstance:GetAttribute("Name")] then
+        PurchaseCallbacks[self.ButtonInstance:GetAttribute("Name")](self)
     end
 end
 
 function ButtonClass:Appear()
-    local unlock = self._buttonInstance.Unlock.Value
+    local unlock = self.ButtonInstance.Unlock.Value
     unlock.Parent = self.TycoonInstance.Unlockables
 end
 
 function ButtonsHandler.PlayerInit(player: Player)
     repeat task.wait() until player:GetAttribute("TYCOON_SLOT")
     ButtonsHandler.Buttons[player] = {}
-    task.wait(0.5)
     local sortedButtons = {}
 
     for _, button in workspace.Tycoons[player:GetAttribute("TYCOON_SLOT")].Buttons:GetChildren() do

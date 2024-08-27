@@ -2,10 +2,13 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local ProxyTable = require(ReplicatedStorage.Shared.Packages.ProxyTable)
 local FruitsProxy = ProxyTable.new("Fruits")
+local GlobalProxy = ProxyTable.new("Global")
 
 local PurchaseCallbacks = {}
 
 PurchaseCallbacks["CONVEYOR 1"] = function(buttonObject)
+	GlobalProxy:Set("DIAMOND UPGRADER EXTENDER", true)
+
 	local unlock = buttonObject.ButtonInstance.Unlock.Value
 	unlock.Sell.Touched:Connect(function(hit)
         if not hit:HasTag("FRUIT") then return end

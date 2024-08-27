@@ -35,6 +35,11 @@ function FruitClass.new(properties)
 	fruit.Parent = nil
 	fruit.CollisionGroup = "Fruit"
 
+	local AnimationStyle = properties.DropperObject:GetInstance():GetAttribute("OnDropAnimationType")
+	if AnimationStyle and AnimationStyles[AnimationStyle] then
+		AnimationStyles[AnimationStyle].OnDrop(properties.DropperObject)
+		task.wait(AnimationStyles[AnimationStyle].Yield)
+	end
 	
 	return setmetatable({
 		_value = properties.BaseValue,

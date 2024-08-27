@@ -15,6 +15,10 @@ function Upgrader.new(owner: Player, instance: Instance)
     }, Upgrader)
 end
 
+function Upgrader:GetInstance()
+    return self._instance
+end
+
 function Upgrader:Destroy()
     self._trove:Destroy()
 end
