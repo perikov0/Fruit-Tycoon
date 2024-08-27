@@ -1,9 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Manipulator = require(ReplicatedStorage.Shared.Data.Manipulator)
-local ProxyTable = require(ReplicatedStorage.Shared.Packages.ProxyTable)
-
-local FruitsProxy = ProxyTable.new("Fruits")
 
 local FruitClass = {
     __add = function(self, value)
@@ -18,12 +15,18 @@ local FruitClass = {
 FruitClass.__index = FruitClass
 
 function FruitClass.new(properties)
+	local upgraderDict = {}
+	for _, upgradeName in properties.UpgradesAvailable do
+		upgraderDict[upgradeName] = false
+	end -- Convert array to dict
+	
 	return setmetatable({
 		_value = properties.BaseValue,
 		DropperObject = properties.DropperObject,
 		GUID = properties.GUID,
-		Upgraders = {},
-		Active = true
+		Upgraders = upgraderDict,
+		Active = true,
+		Metadata = properties.Metadata,
 	}, FruitClass)
 end
 
@@ -31,15 +34,18 @@ function FruitClass:Process()
 	if not self.Active then return end
 	local owner: Player = self.DropperObject._owner
 	if not owner then return end
-	
-	local originalCash = Manipulator.GetData(owner.UserId, "Cash")
-	Manipulator.SetData(owner.UserId, "Cash", originalCash + self._value, true)
+	if self.Metadata.IsGem == true then
+		local originalValue = Manipulator.GetData(owner.UserId, "Gems")
+		Manipulator.SetData(owner.UserId, "Gems", originalValue + self._value, true)
+	else
+		local originalValue = Manipulator.GetData(owner.UserId, "Cash")
+		Manipulator.SetData(owner.UserId, "Cash", originalValue + self._value, true)
+	end
 	self:Destroy()
 end
 
 function FruitClass:Modify(upgradeName)
-	print(upgradeName)
-	if self.Upgraders[upgradeName] then return false end
+	if self.Upgraders[upgradeName] == true then return false end -- `self.Upgraders[upgradeName]` has 3 states, treat true seperately 
 	self.Upgraders[upgradeName] = true
 	return self.Upgraders[upgradeName]
 end

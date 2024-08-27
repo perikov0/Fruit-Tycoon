@@ -48,11 +48,18 @@ function FruitClass.new(properties)
 		GUID = properties.GUID,
 		Fruit = fruit,
 		Active = true,
+		Metadata = properties.Metadata,
 	}, FruitClass)
 end
 
 function FruitClass:UpdateBillboard()
-	self.ValueDisplay.Cash.Text = "$"..(self._value - self._value%0.01) -- Trunctate
+	local tValue = (self._value - self._value%0.01)
+	if self.Metadata.IsGem == true then
+		self.ValueDisplay.Cash.Text = "[G$] "..tValue -- Trunctate
+		self.ValueDisplay.Cash.TextColor3 = Color3.fromRGB(166, 131, 255)
+	else
+		self.ValueDisplay.Cash.Text = "$"..tValue -- Trunctate
+	end
 end 
 
 function FruitClass:SetAttribute(propertyName, propertyValue)
