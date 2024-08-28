@@ -51,6 +51,7 @@ end
 function ButtonClass:Appear()
     local unlock = self.ButtonInstance.Unlock.Value
     unlock.Parent = self.TycoonInstance.Unlockables
+    ReplicatedStorage.Remotes.AppearAnimation:FireClient(self.Owner)
 end
 
 function ButtonsHandler.PlayerInit(player: Player)

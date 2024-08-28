@@ -87,6 +87,8 @@ function ButtonClass:Purchase()
     if PurchaseCallbacks[self.ButtonInstance:GetAttribute("Name")] then
         PurchaseCallbacks[self.ButtonInstance:GetAttribute("Name")](self)
     end
+
+
 end
 
 return ButtonClass
